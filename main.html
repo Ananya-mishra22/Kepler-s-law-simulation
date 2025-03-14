@@ -1,0 +1,223 @@
+<!doctype html>
+<html> 
+ <head> 
+  <style>
+      body {
+        background-image: url("https://c1.wallpaperflare.com/preview/85/553/267/stars-background-blue-photoshop.jpg");
+           }
+        
+    </style> 
+ </head> 
+ <body> 
+  <canvas id="canvas"></canvas> 
+  <script type="application/javascript">
+      
+      void function() {
+        
+      
+        "use strict";
+        const _2PI = 2.0 * Math.PI;
+    
+    //Used for defining sun.  
+        class Planet {
+          constructor(x,y,radius,colour,parent,orbitDistance,orbitSpeed) {
+            this.x = 0;
+            this.y = 0;
+            this.originX = x;
+            this.originY = y;
+            this.radius = radius;
+            this.colour = colour;
+            this.parent = parent || null;
+            this.orbit_Distance = parent ? orbitDistance : 0;
+                        this.orbitDistance= this.orbit_Distance;
+            this.orbitSpeed = parent ? orbitSpeed : 0.0;
+            this.orbitAngle = 0.0;
+          }
+   
+        
+          tick() {
+            this.orbitAngle += this.orbitSpeed;
+            if (this.orbitAngle > _2PI) {
+              this.orbitAngle = 0.0;
+              document.write
+                            
+            }
+            
+            this.x = (this.parent ? this.parent.x : this.originX) +  Math.cos(this.orbitAngle) * (this.orbitDistance+50);
+            this.y = (this.parent ? this.parent.y : this.originY) + Math.sin(this.orbitAngle) * (this.orbitDistance-20);
+          }
+     //to create a circle.     
+          render(ctx) {
+            ctx.strokeStyle = "black";
+            ctx.fillStyle = this.colour;
+            ctx.beginPath();
+            ctx.arc(this.x,this.y,this.radius,0.0,_2PI);
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+          }
+        }
+        
+        //used for defining earth.
+        class Planeet {
+          constructor(x,y,radius,colour,parent,orbitDistance,orbitSpeed) {
+            this.x = 0;
+            this.y = 0;
+            this.originX = x;
+            this.originY = y;
+            this.radius = radius;
+            this.colour = colour;
+            this.parent = parent || null;
+            this.orbit_Distance = parent ? orbitDistance : 0;
+                        this.orbitDistance= this.orbit_Distance;
+            this.orbit_Speed = parent ? orbitSpeed : 0.0;
+            this.orbitSpeed = this.orbit_Speed;
+            this.orbitAngle = 0.0;
+          }
+          
+          //to move earth in an orbit.
+          tick() {
+            this.orbitAngle += this.orbitSpeed;
+            if (this.orbitAngle > _2PI) {
+              this.orbitAngle = 0.0;
+                            
+            }
+            
+            this.x = (this.parent ? this.parent.x : this.originX) +  Math.cos(this.orbitAngle) * (this.orbitDistance+100);
+            this.y = (this.parent ? this.parent.y : this.originY) + Math.sin(this.orbitAngle) * (this.orbitDistance);
+          }
+          
+          render(ctx) {
+            ctx.strokeStyle = "black";
+            ctx.fillStyle = this.colour;
+            ctx.beginPath();
+            ctx.arc(this.x-100,this.y,this.radius,0.0,_2PI);
+            ctx.fill();
+            ctx.stroke();
+            ctx.closePath();
+          }
+                   
+        }
+        
+        //to show the area.
+        class area
+        {
+          constructor(a,b,r,Sa,Ea)
+          {
+            this.a = a;
+            this.b = b;
+            this.r = r;
+            this.Sa = Sa;
+            this.Ea = Ea;
+          }
+          render(ctx) 
+          {
+            ctx.fillStyle = "cyan";
+            ctx.beginPath();
+ctx.moveTo(this.a,this.b);
+ctx.arc(this.a, this.b, this.r, this.Sa, _2PI/this.Ea);
+ctx.lineTo(this.a,this.b);
+ctx.fill();
+ctx.stroke();
+          }
+         
+         //to calculate the area 
+       area1()
+       {
+       document.write("area1 = "+(this.r * this.r) * ((_2PI/this.Ea)-this.Sa)/2);
+       }
+       area2()
+       {
+       document.write("\n ; area2 = "+(this.r * this.r) * ((_2PI-this.Sa)+(_2PI/this.Ea))/2);
+       }
+         
+    
+          
+        }
+        
+        //to show two lines joining aphelion and perihelion to the centre.
+        class liine
+        {
+          constructor (p,q,s,t)
+            {
+            this.p = p;
+            this.q = q;
+            this.s = s;
+            this.t = t;
+          }
+          render(ctx) 
+          {
+            ctx.strokeStyle = "maroon";
+            ctx.beginPath();
+ctx.moveTo(this.p,this.q);
+ctx.lineTo(this.s,this.t);
+ctx.stroke();
+          }
+         
+        }
+        
+        //declaration of the variables used.
+        let canvasWidth = 500;
+        let canvasHeight = 500;
+        let canvas = null;
+        let ctx = null;
+        let sun = null;
+        let earth = null;
+        let A1 = null;
+        let A2 = null;
+        let l1 = null;
+        let l2 = null;
+
+      
+        
+        function loop() {
+          
+          // Update orbits
+          sun.tick();
+          earth.tick();
+          
+        
+          
+          // Clear canvas
+          ctx.fillStyle = "grey";
+          ctx.fillRect(1000,0,canvasWidth,canvasHeight);
+          
+          // Render planets
+          sun.render(ctx);
+          earth.render(ctx);
+          A1.render(ctx);
+          A2.render(ctx);
+          l1.render(ctx);
+          l2.render(ctx);
+          
+          // Keeps the loop running at 60 fps
+          requestAnimationFrame(loop);
+        }
+        
+        window.onload = function() {
+          canvas = document.getElementById("canvas");
+          canvas.width = canvasWidth;
+          canvas.height = canvasHeight;
+          ctx = canvas.getContext("2d");
+          sun = new Planet(300, 250, 40,"orange");
+          earth = new Planeet(0,0,20,"blue",sun,120,0.025);
+          A1 = new area(310, 250, 260, 3.1,1.955);
+          A2 = new area(390, 250, 60,5.2,5.9516352); 
+          l1 = new liine(310,250,50,245);
+          l2 = new liine(390,250,450,250);
+                  
+                                        loop();
+                                        
+        }
+        window.onmouseover = function()
+        {
+    
+        A1.area1();
+        A2.area2();
+        }
+       }
+      ();
+      
+    </script> 
+ </body>
+</html>
